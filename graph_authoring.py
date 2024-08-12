@@ -4,7 +4,7 @@ import json
 from langchain_openai import AzureChatOpenAI
 import openai
 import random
-with open("../config.json") as config_file:
+with open("backup_config.json") as config_file:
     config = json.load(config_file)
 
 os.environ["AZURE_OPENAI_API_KEY"] = config["SECRET_KEY_OPENAI"]
@@ -31,18 +31,18 @@ os.environ["NEO4J_USERNAME"] = "neo4j"
 os.environ["NEO4J_PASSWORD"] = "abc123456"
 
 # %%
-stage_dict = {
-    1:[2,3,4,5],
-}
+# stage_dict = {
+#     1:[2,3,4,5],
+# }
 
 # %%
-user_prompt_template = """System prompt: This is the structure of the whole story [graph, defined
-by the author], currently it is in [stage 2], you should follow these
-components:
-event: 来自当前阶段用户定义的卡片的内容
-character: 来自当前阶段用户定义的卡片的内容
-the player's input: 来自当前阶段用户定义的卡片的内容
-You should output the narrative...."""
+# user_prompt_template = """System prompt: This is the structure of the whole story [graph, defined
+# by the author], currently it is in [stage 2], you should follow these
+# components:
+# event: 来自当前阶段用户定义的卡片的内容
+# character: 来自当前阶段用户定义的卡片的内容
+# the player's input: 来自当前阶段用户定义的卡片的内容
+# You should output the narrative...."""
 
 # %%
 
@@ -58,32 +58,32 @@ def read_file_to_string(file_path):
 # print(file_content)
 
 # %%
-def generate_prompt(curr_input, prompt_lib_file): 
-  """
-  Takes in the current input (e.g. comment that you want to classifiy) and 
-  the path to a prompt file. The prompt file contains the raw str prompt that
-  will be used, which contains the following substr: !<INPUT>! -- this 
-  function replaces this substr with the actual curr_input to produce the 
-  final promopt that will be sent to the GPT3 server. 
-  ARGS:
-    curr_input: the input we want to feed in (IF THERE ARE MORE THAN ONE
-                INPUT, THIS CAN BE A LIST.)
-    prompt_lib_file: the path to the promopt file. 
-  RETURNS: 
-    a str prompt that will be sent to OpenAI's GPT server.  
-  """
-  if type(curr_input) == type("string"): 
-    curr_input = [curr_input]
-  curr_input = [str(i) for i in curr_input]
+# def generate_prompt(curr_input, prompt_lib_file): 
+#   """
+#   Takes in the current input (e.g. comment that you want to classifiy) and 
+#   the path to a prompt file. The prompt file contains the raw str prompt that
+#   will be used, which contains the following substr: !<INPUT>! -- this 
+#   function replaces this substr with the actual curr_input to produce the 
+#   final promopt that will be sent to the GPT3 server. 
+#   ARGS:
+#     curr_input: the input we want to feed in (IF THERE ARE MORE THAN ONE
+#                 INPUT, THIS CAN BE A LIST.)
+#     prompt_lib_file: the path to the promopt file. 
+#   RETURNS: 
+#     a str prompt that will be sent to OpenAI's GPT server.  
+#   """
+#   if type(curr_input) == type("string"): 
+#     curr_input = [curr_input]
+#   curr_input = [str(i) for i in curr_input]
 
-  f = open(prompt_lib_file, "r")
-  prompt = f.read()
-  f.close()
-  for count, i in enumerate(curr_input):   
-    prompt = prompt.replace(f"!<INPUT {count}>!", i)
-  if "<commentblockmarker>###</commentblockmarker>" in prompt: 
-    prompt = prompt.split("<commentblockmarker>###</commentblockmarker>")[1]
-  return prompt.strip()
+#   f = open(prompt_lib_file, "r")
+#   prompt = f.read()
+#   f.close()
+#   for count, i in enumerate(curr_input):   
+#     prompt = prompt.replace(f"!<INPUT {count}>!", i)
+#   if "<commentblockmarker>###</commentblockmarker>" in prompt: 
+#     prompt = prompt.split("<commentblockmarker>###</commentblockmarker>")[1]
+#   return prompt.strip()
 
 # prompt = generate_prompt(file_content,r'C:\Users\user\Desktop\UROP2100M\Stanford_AItown\reverie\backend_server\persona\prompt_template\v3_ChatGPT\get_entity.txt' )
 
@@ -109,7 +109,7 @@ from langchain_experimental.graph_transformers import LLMGraphTransformer
 from langchain.chains import GraphCypherQAChain
 from langchain_core.prompts.prompt import PromptTemplate
 from langgraph.checkpoint.sqlite import SqliteSaver
-
+#%%
 graph = Neo4jGraph()
 graph.query("MATCH (n) DETACH DELETE n")
 class State(TypedDict):
@@ -151,28 +151,6 @@ class Graphretriever:
         return cls(docs,graph_docs, graph)
 
     def query(self, query: str):
-        # CYPHER_GENERATION_TEMPLATE = """Task:Generate Cypher statement to query a graph database.
-        # Instructions:
-        # Use only the provided relationship types and properties in the schema.
-        # Do not use any other relationship types or properties that are not provided.
-        # Schema:
-        # {schema}
-        # Note: Do not include any explanations or apologies in your responses.
-        # Do not respond to any questions that might ask anything else than for you to construct a Cypher statement.
-        # Do not include any text except the generated Cypher statement.
-        # Examples: Here are a few examples of generated Cypher statements for particular questions:
-        # # How many people played in Top Gun?
-        # MATCH (m:Movie {{name:"Top Gun"}})<-[:ACTED_IN]-()
-        # RETURN count(*) AS numberOfActors
-
-        # The question is:
-        # {question}"""
-        # CYPHER_GENERATION_PROMPT = PromptTemplate(
-        #     input_variables=["schema", "question"], template=CYPHER_GENERATION_TEMPLATE
-        # )
-        # chain = GraphCypherQAChain.from_llm(
-        #     llm, graph=self._graph, verbose=True,cypher_prompt=CYPHER_GENERATION_PROMPT, validate_cypher=True,
-        #         )
         chain = GraphCypherQAChain.from_llm(
             llm, graph=self._graph, verbose=True,
                 )
@@ -202,16 +180,6 @@ def documentLookup(arg: str):
     
     test_prompt = '''MATCH (n)-[r]-(m) return n,r,m'''
     graph_query_result = graph.query(test_prompt)
-    # cypher_query = f"MATCH (n)-[r]->(m) where id(n) = {query} return n,r,m"
-    # res = graph.query(cypher_query)
-    # res = (f"{row['n']} --- {row['r']} ---> {row['m']}" for row in result)
-    # output = []
-    # output.append(
-    #     ToolMessage(
-    #                 content=json.dumps(res),
-    #                 name='documentLookup',
-    #                 tool_call_id=tool_call["id"],
-    # )
     print(f'{graph_query_result=}')
     return graph_query_result
 
@@ -258,17 +226,6 @@ def chatbot(state: State):
         custom_ouput = True
     return {"messages": [response], "custom_ouput": custom_ouput}
 
-# def tool_router(state):
-#     if state["custom_ouput"]:
-#         return 'human'
-#     messages = state["messages"]
-#     last_message = messages[-1]
-#     toolcalllist = []
-#     for tool in  last_message.tool_calls:
-#         toolcalllist.append(tool["name"])
-#     if documentLookup in toolcalllist:
-#         return "lookup"
-#     return "__end__"
 def route_tools(
     state: State,
 ) -> Literal["tools", "__end__"]:
@@ -354,16 +311,6 @@ except Exception:
     # This requires some extra dependencies and is optional
     pass
 
-# %%
-# docs = '''Humanity has developed an advanced undersea civilization in the future. Undersea cities have become the primary habitats for humans, featuring high-tech architecture and facilities, including transparent domes, underwater transportation systems, underwater agriculture, and energy development facilities.'''
-# docs = [Document(page_content=docs)]
-# llm_transformer = LLMGraphTransformer(llm=llm)
-# graph_docs = llm_transformer.convert_to_graph_documents(docs)
-# print(f"Nodes:{graph_docs[0].nodes}")
-# print(f"Relationships:{graph_docs[0].relationships}")
-
-# %%
-# graph.add_graph_documents(graph_docs)
 
 # %%
 config = {"configurable": {"thread_id": "1"}}
@@ -380,15 +327,7 @@ def ask_graph(user_input):
 
     return messages_store
 user_input = "show all the node that the undersea cities node point to.That is return the node that undersea cities node have outward edges on it."
-# ms = ask_graph(user_input)
-
-# %%
-# print(type(ms[-1].content))
-
-# %%
-#====================================================================================================
-# %%
-### Build Index
+#%%
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
@@ -400,12 +339,14 @@ from langchain_openai import AzureOpenAIEmbeddings
 # The Document object contains the text of the state of the union which is used to build the graph's index
 # The Graphretriever is initialized with the state of the union text and the graph which is used to query the graph database
 embd = AzureOpenAIEmbeddings()
-with open("stage1.txt") as f:
-    state_of_the_union = f.read()
-doc = [Document(page_content=state_of_the_union)]
-graph_api = Graphretriever.from_docs( state_of_the_union,graph) # Initialize the graph API with the state of the union text and the graph
+with open('test1.txt', 'r') as f:
+    file_content = f.read()
+
+doc = [Document(page_content=file_content)]
+graph_api = Graphretriever.from_docs( '',graph) # Initialize the graph API with the state of the union text and the graph
 
 # %%
+# initialize the doc system
 text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
     chunk_size=500, chunk_overlap=0
 )
@@ -452,12 +393,7 @@ route_prompt = ChatPromptTemplate.from_messages(
 )
 
 question_router = route_prompt | structured_llm_router
-# print(
-#     question_router.invoke(
-#         {"question": "Who will the Bears draft first in the NFL draft?"}
-#     )
-# )
-# print(question_router.invoke({"question": "What are the types of agent memory?"}))
+
 
 # %%
 ### Retrieval Grader
@@ -490,10 +426,7 @@ grade_prompt = ChatPromptTemplate.from_messages(
 retrieval_grader = grade_prompt | structured_llm_grader
 question = "marval ironman"
 docs = retriever.get_relevant_documents(question)
-doc_txt = docs[1].page_content
-# print(type(docs[0]))
-# print(doc_txt)
-# print(retrieval_grader.invoke({"question": question, "document": doc_txt}))
+# doc_txt = docs[1].page_content
 
 # %%
 ### Generate
@@ -590,7 +523,8 @@ class GenerationMerger(BaseModel):
 structured_llm_grader = llm.with_structured_output(GenerationMerger)
 
 # Prompt
-system = """You are a content merger merging the generation from rag and graph rag.Graph rag tend to hold more marco and long-term information. While RAG tends to hold mirco and short-term information.Try to usen the graph rag info for background and fill in the detail with rag."""
+system = """You are a content merger merging the generation from rag and graph rag.Graph rag tend to hold more marco and long-term information. While RAG tends to hold mirco and short-term information.Try to usen the graph rag info for background and fill in the detail with rag.
+if graph rag generation said there is no information, only generate text based on rag generation instead."""
 merge_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", system),
@@ -637,6 +571,7 @@ class GraphState(TypedDict):
     generation: str
     graph_generation : str
     documents: List[str]
+    retry: int
 # %%
 from langchain.schema import Document
 
@@ -658,24 +593,6 @@ def retrieve(state):
     documents = retriever.invoke(question)
     return {"documents": documents, "question": question}
 
-# def graph_retrieve(state):
-#     """
-#     Retrieve documents from the graph based on the given state.
-
-#     Args:
-#         state (dict): The current state of the graph.
-
-#     Returns:
-#         dict: A dictionary containing the retrieved graph generation and the original question.
-#             - graph_generation (str): The retrieved graph generation.
-#             - question (str): The original question used for retrieval.
-#     """
-#     print("---RETRIEVE GRAPH---")
-#     question = state["question"]
-
-#     # Retrieval
-#     graph_generation = ask_graph(question)
-#     return {"graph_generation" : graph_generation, "question": question}
 
 
 def generate(state):
@@ -730,7 +647,7 @@ def grade_documents(state):
         else:
             print("---GRADE: DOCUMENT NOT RELEVANT---")
             continue
-    return {"documents": filtered_docs, "question": question}
+    return {"documents": filtered_docs, "question": question, 'retry': state['retry']}
 
 def transform_query(state):
     """
@@ -749,7 +666,7 @@ def transform_query(state):
 
     # Re-write question
     better_question = question_rewriter.invoke({"question": question})
-    return {"documents": documents, "question": better_question}
+    return {"documents": documents, "question": better_question , 'retry': state['retry'] + 1}
 
 
 def web_search(state):
@@ -813,15 +730,19 @@ def decide_to_generate(state):
     print("---ASSESS GRADED DOCUMENTS---")
     filtered_documents = state["documents"]
     generation = state["generation"]
+    retry = state['retry']
 
 
-    if not filtered_documents:
+    if not filtered_documents and retry < 1:
         # All documents have been filtered check_relevance
         # We will re-generate a new query
         print(
             "---DECISION: ALL DOCUMENTS ARE NOT RELEVANT TO QUESTION, TRANSFORM QUERY---"
         )
         return "transform_query"
+    elif retry == 1:
+        print(f"---DECISION: ALL DOCUMENTS ARE NOT RELEVANT TO QUESTION AFTER {retry} ATTEMPTS, End Session---")
+        return "end_session"
     elif generation == '':
         print("---DECISION: GENERATE_GRAPH---")
         return 'generate_graph'
@@ -846,17 +767,12 @@ def grade_generation_v_documents_and_question(state):
     question = state["question"]
     documents = state["documents"]
     generation = state["generation"]
-    # graph_generation = state['graph_generation']
-    # get_graph_prompt = '''MATCH (n)-[r]-(m) return n,r,m'''
-    # whole_graph = graph.query(get_graph_prompt)
-    # print(f'{whole_graph=}')
+  
 
     score = hallucination_grader.invoke(
         {"documents": documents, "generation": generation}
     )
-    # graph_score = hallucination_grader.invoke(
-    #     {"documents": [Document(page_content=whole_graph)], "generation": graph_generation}
-    # )
+
     grade = score.binary_score
 
     # Check hallucination
@@ -887,7 +803,7 @@ def merge_text(state):
 
     merged_text = generation_merger.invoke({"graph_generation": graph_generation, "generation": generation})
 
-    return {"merge_final": merged_text.merged_content , "graph_generation": graph_generation , 'generation' : generation}
+    return {'retry':state['retry'],"merge_final": merged_text.merged_content , "graph_generation": graph_generation , 'generation' : generation}
 
 
 
@@ -923,7 +839,8 @@ adaptive_rag.add_conditional_edges(
     {
         "transform_query": "transform_query",
         "generate_graph": 'graph_generate',
-        'generate': 'generate'
+        'generate': 'generate',
+        'end_session': END
     },
 )
 adaptive_rag.add_edge('graph_generate', 'generate')
@@ -957,22 +874,26 @@ from pprint import pprint
 inputs =  "base on the documents,what did human made in the future?"
 
 def call_ada_rag_with_graph(user_input):
-    user_input = {
+    user_inputs = {
     "question": user_input,
     'generation': '',
-    'merge_final': ''
+    'merge_final': '',
+    'retry': 0
 }
-
-    for output in ada_rag_complied.stream(user_input):
+    output_store = None
+    for output in ada_rag_complied.stream(user_inputs):
         for key, value in output.items():
             # Node
             pprint(f"Node '{key}':")
             # Optional: print full state at each node
             # pprint.pprint(value["keys"], indent=2, width=80, depth=None)
         pprint("\n---\n")
-    return value
+        output_store = output
+    return output
 
-call_ada_rag_with_graph(inputs)
+# temp_ata = call_ada_rag_with_graph(inputs)
+# %%
+# pprint(temp_ata)
 # %%
 def add_doc(path):
     with open(path) as f:
@@ -991,8 +912,380 @@ def add_doc(path):
         embedding=embd,
     )
     return content
+
+def add_doc_string(text):
+    doc.append(Document(page_content=text))
+    graph_api.update_graph(text)
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+    chunk_size=500, chunk_overlap=0
+    )
+    doc_splits = text_splitter.split_documents(doc)
+
+    # Add to vectorstore
+    vectorstore = Chroma.from_documents(
+        documents=doc_splits,
+        collection_name="rag-chroma",
+        embedding=embd,
+    )
+    return text
 # %%
 # Start from here, we have function ask graph and call_ada_rag_with_graph that
 # let us do graph retrieval and do combined retrieval respectively.
 
-# %% 
+
+# %%
+def reducer_append(old_list , new_string):
+    print(f'{old_list=}')
+    if new_string is not None:
+        return old_list + [new_string]
+    return old_list
+class MainGraphState(TypedDict):
+    world_setting : list
+    user_input: list
+    story_generation : list
+    rag_generation : Annotated[list, reducer_append] 
+    character_allocation : dict
+    logic : list
+    summary : list
+    all_summary : str
+    output : str
+# %%
+
+def initizalize_graph_state_and_doc(state):
+    """
+    Initializes the graph state and document.
+
+    This function takes in a state object and initializes the graph state by 
+    extracting the world setting, character, narrator behavior, and previous 
+    generation from the state. It then reads the all generation text from a file 
+    and appends a document to the doc list. The function also updates the graph 
+    using the graph API and splits the documents using a text splitter. Finally, 
+    it adds the split documents to a vector store.
+
+    Args:
+        state (dict): The state object containing the graph state information.
+
+    Returns:
+        dict: An empty dictionary.
+    """
+    print('---initizalize_graph_state_and_doc---')
+    world_setting = state['world_setting']
+    previous_gen = None
+    if state['story_generation'] != []:
+        previous_gen = state['story_generation'][-1]
+        print(f'{type(previous_gen)=}')
+        print(f'{previous_gen=}')
+        doc.append(Document(page_content=previous_gen))
+        text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=500, chunk_overlap=0
+        )
+        doc_splits = text_splitter.split_documents(doc)
+        add_doc_string(world_setting[-1])
+        all_gen_text = '\n\n'.join(state['story_generation'])
+        graph.query("MATCH (n) DETACH DELETE n")
+        graph_api.update_graph(all_gen_text)
+        vectorstore = Chroma.from_documents(
+        documents=doc_splits,
+        collection_name="rag-chroma",
+        embedding=embd,
+        )
+
+    for ws in world_setting:
+        graph_api.update_graph(ws)
+    return {'world_setting': world_setting}
+
+
+# %%
+
+# Prompt
+system = """You are a quetion raiser who raise questions based on what is needed to answer the user given question. You questions need to be relevant to the user question.
+Return your questions in json format and as many as you can. All questions need to be stored at 'questions' key.
+"""
+reflect_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", system),
+        ("human", "User question: \n\n {question}. Your response in json need to have key questions."),
+    ]
+)
+
+sub_question_chain = reflect_prompt | llm
+
+
+question = "tell me a story that amy goes to deepsea adventure."
+
+def ask_self_question(user_input):
+    l_of_qs = json.loads(sub_question_chain.invoke({"question": user_input}).content)["questions"]
+    return l_of_qs
+# %%
+def get_relevant_info_from_docs(state):
+    print('---get_relevant_info_from_docs---')
+    user_input = state['user_input'][-1]
+    l_of_q = []
+    for i in range(3):
+        try:
+            l_of_q =ask_self_question(user_input)
+            break
+        except:
+            continue
+    relevant_info = []
+    if l_of_q == []:
+        graph_search = call_ada_rag_with_graph('Based on the document, '+user_input)
+        if graph_search['retry'] <1:
+            relevant_info.append(graph_search['merge_final'])
+        else:
+            relevant_info.append('')
+    else:
+        l_of_q.append(user_input)    
+        for qs in l_of_q:
+            graph_search = call_ada_rag_with_graph('Based on the document, '+qs)
+            if graph_search['retry'] <1:
+                relevant_info.append(graph_search['merge_final'])
+            else:
+                relevant_info.append('')
+    print(f'{relevant_info=}')
+    relevant_info_str = '||'.join(relevant_info)
+    return {'rag_generation': relevant_info_str}
+        
+# %%
+class LogicChecker(BaseModel):
+    """Binary score to assess answer addresses question."""
+
+    binary_score: str = Field(
+        description="Later text contradict the earlier text? Answer 'yes: reason' or 'no: reason'."
+    )
+
+
+system = """You are a logical assistant who check if the later text content contradict the earlier text content.
+Give a binary score with reason: 'yes : reason' or 'no : reason'. Yes' means that the later text contradict the earlier text. 
+No means that the two text don't contradict each other. Also, change of place and time is allowed in two text.
+"""
+logic_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", system),
+        ("human", "Earlier text: \n\n {text1}. Later text: \n\n {text2}."),
+    ]
+)
+
+logic_chain = logic_prompt | llm
+
+
+# text1 = "On monday. Mary is in the kitchen. Tom is in the bedroom."
+# text2 = "On Tuesday.Tom is in the kitchen. Mary is in the bedroom."
+# text1 = "On monday. Mary is a female. Tom is a male."
+# text2 = "On Tuesday.Tom is a female. Mary is a male."
+text1 = "Elephant 1 arrived"
+text2 = "Elephant 2 arrived"
+def check_two_texts(text1, text2):
+    return logic_chain.invoke({"text1": text1, "text2": text2}).content
+# %%
+def check_logic_generate(state):
+    print('---check_logic_generate---')
+    if state['story_generation'] == []:
+        return {'logic': [True, [], []]}
+    previous_gens = state['story_generation']
+    logic = [True, [], []]
+    for i in range(len(previous_gens)-1):
+        text1 = previous_gens[i]
+        text2 = previous_gens[-1]
+        check_result = check_two_texts(text1, text2)
+        if check_result[:3] == 'No:':
+            logic[0] = False
+            logic[1].append(i)
+            logic[2].append(check_result[5:])
+    print(f'{logic=}')
+    return {'logic': logic}
+# %%
+class CharacterTracker(BaseModel):
+    """Binary score to assess answer addresses question."""
+
+    grouping: str = Field(
+        description="What is the grouping of the characters? e.g. 'group1 : Character1 , Character3' or 'group2 : Character2 , Character4'. Output in json format"
+    )
+
+
+system = """You are a character tracker who tracks the grouping of the characters based on the character location in the input text.
+You output need to be in json format where groupi is the key. i is an integer. Name of charaters are the values in list.
+"""
+group_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", system),
+        ("human", "Text: \n\n {text}."),
+    ]
+)
+
+group_chain = group_prompt | llm
+
+
+# text1 = "On monday. Mary is in the kitchen. Tom is in the bedroom."
+# text2 = "On Tuesday.Tom is in the kitchen. Mary is in the bedroom."
+# text1 = "On monday. Mary is a female. Tom is a male."
+# text2 = "On Tuesday.Tom is a female. Mary is a male."
+text = "In the heart of the Future Undersea Civilization, echoes of the past bubble up through the serene waters. Arial and Paul once thrived among the high-tech wonders, sharing dreams beneath the colossal transparent domes. The nostalgic hum of underwater transportation spoke their names. Luis and Jacob now walk the pathways they once charted, the memories of their friends lingering in the cool, aquatic air."
+def check_group(text):
+    return json.loads(group_chain.invoke({ "text": text}).content)
+#%%
+def get_grouping(state):
+    print('---get_grouping---')
+    previous_gens = state['story_generation'][-1]
+    character_allocation = state["character_allocation"]
+    group = {}
+    for i in range(3):
+        try:
+            group=check_group(previous_gens)
+            break
+        except:
+            return {'character_allocation':character_allocation}
+    character_pre_allocation = []
+    chara_post_allocation = []
+    for k, v in character_allocation.items():
+        for c in v:
+            character_pre_allocation.append((c, v.copy().remove(c)))
+    for k,v in group.items():
+        for c in v:
+            chara_post_allocation.append(c)
+    for c in character_pre_allocation:
+        if c[0] not in chara_post_allocation:
+            for k, v in group.items():
+                breaked = False
+                for sc in c[1]:
+                    if sc in v:
+                        v.append9(c[0])
+                        break
+                if breaked:
+                    break
+    print(f'{group=}')
+    return {'character_allocation':group}
+# %%
+system = """You are a summarizer who summarizes the input story stage.
+"""
+summarize_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", system),
+        ("human", "Story stage: \n\n {text}."),
+    ]
+)
+
+summarize_chain = summarize_prompt | llm
+
+
+with open('stage1.txt', 'r') as f:
+    user_input = f.read()
+
+def summarize(user_input):
+    summarized = summarize_chain.invoke({"text": user_input}).content
+    return summarized
+# %%
+def get_summary(state):
+    print('---get_summary---')
+    previous_gens = state['story_generation'][-1]
+    summarized = summarize(previous_gens)
+    all_sum = ''
+    for i, sum in enumerate(state['summary']):
+        all_sum += f'Stage{i}: \n'
+        all_sum += sum
+    all_sum  = summarize(all_sum)
+    return {'summary': summarized, 'all_summary': all_sum}
+# %%
+def merge_all(state):
+    print('---merge_all---')
+    rag_gen = state['rag_generation']
+    char_allo = state['character_allocation']
+    logic = state['logic']
+    summary = state['all_summary']
+    output = ''
+
+    output += f'Information for next generatioin:\n {rag_gen} \n'
+    output += f'Character allocation: \n {json.dumps(char_allo)} \n'
+    output += f'Summary of what happened: \n {summary} \n'
+    output += f'\n storyprogression should be slower, keep cohesive between history \n'
+    return {'output': output}
+# %%
+
+narrative_state_graph = StateGraph(MainGraphState)
+
+narrative_state_graph.add_node('initlize', initizalize_graph_state_and_doc)
+narrative_state_graph.add_node('get_info', get_relevant_info_from_docs)
+narrative_state_graph.add_node('check_logic', check_logic_generate)
+narrative_state_graph.add_node('group', get_grouping)
+narrative_state_graph.add_node('summarize', get_summary)
+narrative_state_graph.add_node('merge_all', merge_all)
+
+narrative_state_graph.add_edge(START, "initlize")
+narrative_state_graph.add_edge('initlize', "get_info")
+narrative_state_graph.add_edge('get_info', "check_logic")
+narrative_state_graph.add_edge('check_logic', "group")
+narrative_state_graph.add_edge('group', "summarize")
+narrative_state_graph.add_edge('summarize', "merge_all")
+narrative_state_graph.add_edge('merge_all', END)
+nar_complied = narrative_state_graph.compile()
+# %%
+from IPython.display import Image, display
+
+try:
+    display(Image(nar_complied.get_graph().draw_mermaid_png()))
+except Exception:
+    # This requires some extra dependencies and is optional
+    pass
+
+# %%
+
+def call_nar_graph(world_setting, user_input, story_generation,character_allocation, summary):
+    user_inputs = {
+        "world_setting": world_setting,
+        "user_input": user_input,
+        "story_generation": story_generation,
+        "character_allocation": character_allocation,
+        "summary": summary,
+        'logic': [True, [], []],
+    }
+    output_store = None
+    for output in nar_complied.stream(user_inputs, stream_mode= 'values'):
+        for key, value in output.items():
+            # Node
+            pprint(f"Node '{key}':")
+            # Optional: print full state at each node
+            # pprint.pprint(value["keys"], indent=2, width=80, depth=None)
+        pprint("\n---\n")
+        output_store = output
+    return output_store
+
+# %%
+# world_setting at least one, a list variable
+ws = ['''
+
+Humanity has developed an advanced undersea civilization in the future. Undersea cities have become the primary habitats for humans, featuring high-tech architecture and facilities, including transparent domes, underwater transportation systems, underwater agriculture, and energy development facilities.
+''']
+# user_input at least one, only use the last element of this list
+ui = ['''
+What humanity developed in the future?
+''']
+# story_generation at least one, a list variable, graph consider all the elements in this list
+sg = ['''
+The Divide of the Deep
+In the vibrant undersea city of Aquapolis, two groups of friends pursued different paths, united by their love for the ocean but driven by distinct passions.
+
+Arial and Paul formed a dynamic duo, combining science and engineering. One day, while exploring a newly mapped area near Aquapolis, they stumbled upon a cluster of unusual bioluminescent plants. Arial, excited by the potential for sustainable agriculture, gathered samples for study.
+
+“This could revolutionize our underwater farms!” she said, her eyes sparkling.
+
+Paul, surveying the surroundings, noted the intricate root systems. “We could design a system that integrates these plants into our existing infrastructure. Imagine the energy savings!”
+
+As they worked, they noticed the plants thrived near a network of submerged caves. Curiosity piqued, they decided to investigate further, hoping to uncover more secrets of the ocean.
+
+Meanwhile, Jacob and Luis embarked on their own adventure. Intrigued by the stories of the ancient civilization they had discovered, they aimed to share these tales with the community. Jacob envisioned a grand mural that depicted the rise and fall of the lost civilization, while Luis sought to research its history.
+
+“We need to gather more artifacts and information,” Luis suggested. “This story could change how people view our connection to the ocean.”
+
+Jacob nodded, sketching ideas for the mural. “Let’s explore the caves and find what we can. The visuals will be powerful!”
+''']
+# character_allocation, initize the character allocation, include all the characeter you want.
+ca = {"group1":['Arial', 'Paul', 'Luis', 'Jacob']}
+# summary, optional, input []
+su = ['''Summary: The Divide of the Deep
+In Aquapolis, Arial and Paul explore bioluminescent plants to enhance sustainable agriculture, while Jacob and Luis investigate artifacts from an ancient civilization. As both groups make discoveries, they realize their pursuits are interconnected, revealing lessons about environmental neglect.
+
+They unite to share their findings at a community event, presenting innovative ideas for sustainability and Jacob’s mural depicting the ancient civilization’s rise and fall. Their collaboration inspires the citizens of Aquapolis, reinforcing the importance of living in harmony with the ocean and shaping a brighter future together.''']
+nar_output = call_nar_graph(ws, ui, sg , ca , su)
+# %%
+pprint(nar_output)
+# %%

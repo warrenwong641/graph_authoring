@@ -1,0 +1,7 @@
+{
+    "SECRET_KEY_APP": "meow1meow2meow3meow4meow5meow6meow7meow8meow9meow", 
+    "BASE_URL": "https://hkust.azure-api.net",
+    "SECRET_KEY_OPENAI": "33406798815443d786896af5bfc0ca1d",
+    "TAVILY_API_KEY" : "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"
+
+  }
