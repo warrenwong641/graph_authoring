@@ -1168,9 +1168,6 @@ summarize_prompt = ChatPromptTemplate.from_messages(
 summarize_chain = summarize_prompt | llm
 
 
-with open('stage1.txt', 'r') as f:
-    user_input = f.read()
-
 def summarize(user_input):
     summarized = summarize_chain.invoke({"text": user_input}).content
     return summarized
@@ -1184,7 +1181,8 @@ def get_summary(state):
         all_sum += f'Stage{i}: \n'
         all_sum += sum
     all_sum  = summarize(all_sum)
-    return {'summary': summarized, 'all_summary': all_sum}
+    state['summary'].append(summarized)
+    return {'summary': state['summary'], 'all_summary': all_sum}
 # %%
 def merge_all(state):
     print('---merge_all---')
@@ -1258,7 +1256,10 @@ Humanity has developed an advanced undersea civilization in the future. Undersea
 # user_input at least one, only use the last element of this list
 ui = ['''
 What humanity developed in the future?
-''']
+''','''
+Pual make a special plant that is very useful to humanity.
+''', '''Jacob explore the anicent undersea city of and encouter a monster''', '''The echo from monster keep recurring in Jacob head.''',
+'''Luis and Arial make a medical device that can be used to heal the monster.''']
 # story_generation at least one, a list variable, graph consider all the elements in this list
 sg = ['''
 The Divide of the Deep
@@ -1277,15 +1278,154 @@ Meanwhile, Jacob and Luis embarked on their own adventure. Intrigued by the stor
 “We need to gather more artifacts and information,” Luis suggested. “This story could change how people view our connection to the ocean.”
 
 Jacob nodded, sketching ideas for the mural. “Let’s explore the caves and find what we can. The visuals will be powerful!”
-''']
+''', '''The Enchanted Bloom of Aquapolis
+In the vibrant depths of Aquapolis, where the shimmering waters danced with the light of bioluminescent plants, a new chapter began to unfold. The air was thick with anticipation as Arial and Paul ventured deeper into the submerged caves, their eyes alight with the thrill of discovery.
+
+The Discovery
+As they navigated the winding corridors of the caves, Paul’s hands brushed against a peculiar plant, unlike any they had encountered before. Its petals glowed with an ethereal light, pulsating gently as if it had a heartbeat of its own. “Arial, look at this!” he exclaimed, pointing to the radiant bloom.
+
+Arial leaned closer, her curiosity piqued. “This isn’t just bioluminescent; it feels… magical. We must study it further.” They decided to name it Lumenflora, a plant that promised not only beauty but also a potential revolution in their agricultural practices.
+
+The Potential
+As they took samples back to their lab, Paul spoke with fervor about the possibilities. “Imagine if we can cultivate Lumenflora! It could provide sustainable light for underwater farms, reducing our reliance on artificial energy sources.” His mind raced with visions of lush, illuminated gardens thriving in the ocean’s embrace.
+
+Arial added thoughtfully, “And its intricate root systems could enhance soil aeration and nutrient absorption. We could grow crops more efficiently than ever before.” The duo’s excitement was palpable as they envisioned a future where food production thrived in harmony with the ocean’s ecosystem.
+
+The Gathering of Minds
+Meanwhile, Jacob and Luis, immersed in their own explorations of ancient artifacts, stumbled upon a stone tablet inscribed with the wisdom of the ancestors. The carvings depicted a civilization that once flourished in harmony with the sea, their survival intertwined with the natural world. Jacob’s artistic eye saw potential in these images for his mural, a narrative that would resonate deeply with the citizens of Aquapolis.
+
+As the two groups converged, the air buzzed with the electricity of shared knowledge. Arial and Paul presented their findings on Lumenflora, while Jacob and Luis unveiled the stories of their ancestors. The community event transformed into a vibrant tapestry of ideas, woven together by threads of history and innovation.
+
+Inspiration and Collaboration
+The citizens of Aquapolis gathered, captivated by Jacob’s mural that spoke of respect for the ocean. It depicted the rise of a once-great civilization, their downfall a cautionary tale of neglect. The glowing Lumenflora, planted at the foot of the mural, illuminated the scene, casting a hopeful glow on the faces of the onlookers.
+
+Paul stepped forward, his voice steady. “We must learn from our past. Lumenflora can be our bridge to a sustainable future, a reminder that we can thrive without sacrificing our environment.” The crowd murmured in agreement, the seed of inspiration taking root in their hearts.
+
+A New Beginning
+As the night deepened, the glowing plants surrounded them, creating an enchanting atmosphere. The city of Aquapolis seemed to pulse with life, echoing the dreams of its inhabitants. Paul, Arial, Jacob, and Luis felt the weight of responsibility upon their shoulders, yet they were emboldened by the unity of purpose that had blossomed among them.
+
+With plans to cultivate Lumenflora and integrate it into their daily lives, the group knew their journey was just beginning. The ocean held many secrets, and they were determined to uncover them, one luminous bloom at a time.
+
+The adventure continued, with each day bringing new discoveries and challenges. The threads of their fates intertwined more deeply, shaping a narrative of resilience and hope for the future of Aquapolis.''',
+'''
+In Aquapolis, Arial and Paul explore bioluminescent plants to enhance sustainable agriculture, while Jacob and Luis investigate artifacts from an ancient civilization. As both groups make discoveries, they realize their pursuits are interconnected, revealing lessons about environmental neglect.
+
+They unite to share their findings at a community event, presenting innovative ideas for sustainability and Jacob’s mural depicting the ancient civilization’s rise and fall. Their collaboration inspires the citizens of Aquapolis, reinforcing the importance of living in harmony with the ocean and shaping a brighter future together.
+
+In the vibrant underwater city of Aquapolis, Arial and Paul discover a magical bioluminescent plant called Lumenflora in submerged caves. Excited by its potential for sustainable agriculture, they envision using it to provide natural light for underwater farms and enhance soil health.
+
+Meanwhile, Jacob and Luis explore ancient artifacts, uncovering wisdom about a civilization that thrived in harmony with the ocean. Their findings culminate in a community event, where they share their discoveries. Jacob's mural depicting the rise and fall of an ancient society inspires citizens to reflect on environmental responsibility.
+
+As the groups unite, they plan to cultivate Lumenflora, fostering a collaborative spirit aimed at creating a sustainable future for Aquapolis. Their journey of exploration and innovation continues, intertwining their fates in pursuit of a brighter tomorrow.
+
+Narrator's Voice:
+
+As the sun dipped below the horizon, casting shimmering rays through the azure waters of Aquapolis, Jacob felt the pull of adventure deep within his heart. His curiosity, like the currents that danced around him, beckoned him toward the ancient undersea city, a place whispered about in the tales of the elders. With Luis by his side, they gathered their supplies—an ancient map etched in coral and a lantern fueled by the very Lumenflora they sought to cultivate.
+
+The path to the ruins wound through coral labyrinths, where vibrant fish flitted about like living jewels. With each fin stroke, the excitement grew, and the ancient echoes of the civilization began to resonate in Jacob’s mind. What secrets lay hidden in the depths? What lessons could be drawn from the remnants of the past?
+
+As they approached the entrance of the undersea city, the water grew colder, and a sense of foreboding enveloped them. The ornate arches, draped with seaweed and adorned with barnacles, whispered of stories long forgotten. It was a place where history lingered, and Jacob could almost hear the laughter of the ancients that once thrived there.
+
+"Stay close," Jacob urged, his voice steady but laced with anticipation. Luis nodded, his eyes wide with wonder and a hint of trepidation. Together, they ventured deeper into the ruins, where the light from Jacob’s lantern flickered against the stone walls, illuminating murals that told tales of harmony with the ocean—a stark contrast to the neglect they had uncovered in their explorations.
+
+Suddenly, a low rumble echoed through the hallways, reverberating like a distant storm. Jacob's heart raced as he exchanged a concerned glance with Luis. The water seemed to shimmer unnaturally, and from the shadows emerged a creature unlike any they had ever seen. Its scales glinted like polished obsidian, and its eyes glowed with a fierce intelligence.
+
+"By the depths..." Jacob whispered, awe and fear intertwining in his voice. The creature, a guardian of the ancient city, regarded them with a mixture of curiosity and caution. Its presence was both mesmerizing and terrifying, a reminder of the power that lay within the ocean's depths.
+
+With the creature looming before them, Jacob felt the weight of history pressing down, urging him to understand the bond between the past and the present. What path would they choose? Would they flee in fear, or would they seek to learn from the guardian, unraveling the mysteries of a civilization that once flourished?
+
+As they stood on the precipice of discovery, the currents of fate swirled around them, their choices echoing through time, waiting to unfold in the depths of Aquapolis.
+''',
+'''
+In the shimmering depths of Aquapolis, where light danced through the water like scattered stars, Jacob stood still, his heart pounding as the eerie echo reverberated in his mind. It was a sound both haunting and majestic, reminiscent of the guardian creature they had encountered in the ancient ruins. As he closed his eyes, the echo swirled around him, stirring memories and emotions that felt almost alive.
+
+Narrator’s Voice:
+
+Gather 'round, weary travelers, for the tale unfolds in the aquatic realm of Aquapolis, where the line between past and present blurs beneath the waves. Here, our heroes embark on a journey not only through the remnants of an ancient civilization but also through the corridors of their own minds.
+
+Jacob, still grappling with the weight of that echo, shared a knowing glance with Luis. "Do you hear it too?" he asked, his voice barely more than a whisper, as if speaking aloud might disturb the very essence of the sound that haunted him.
+
+Luis nodded, his brow furrowed in thought. "It feels like it's calling to us, Jacob. Perhaps it’s the wisdom of the ancients, resonating with our quest."
+
+As they stood amidst the crumbling stone and vibrant coral, the ruins whispered stories of an era long gone—an age where the ocean was revered, not neglected. The guardian creature, with its glinting scales and glowing eyes, had been both a protector and a reminder of what was lost. Each echo in Jacob's mind felt like a breadcrumb, leading them deeper into the truth of their mission.
+
+But hark! The winds of fate twist and turn, and our adventurers must now decide their next steps. Will they delve further into the mysteries of the ruins, seeking the source of the echo? Or shall they return to the luminous embrace of Lumenflora, and share their insights with Arial and Paul?
+
+As the sun's rays filtered through the clear waters, painting everything in hues of gold and green, Jacob felt a surge of determination. "We must understand this echo," he said, the resolve hardening in his voice. "It could be the key to unlocking the lessons of the past."
+
+Luis agreed, his curiosity piqued. "Let’s explore further. There might be more artifacts that can shed light on the civilization's connection to the ocean—and perhaps to that creature."
+
+With a shared sense of purpose, they ventured deeper into the ruins, their path illuminated by the faint glow of bioluminescent organisms clinging to the stone. The air was thick with the scent of salt and secrets, each step echoing the heartbeat of the ocean itself.
+
+As they moved through the ancient pathways, the echoes grew louder, swirling in a symphony of sound that tugged at their very souls. It was as if the very walls of the ruins were alive, resonating with the memories of those who once thrived here. Each echo became a thread, weaving their fates together—Jacob's past, Luis’s dreams, and the looming specter of the guardian.
+
+Suddenly, a flash of movement caught Jacob's eye. The guardian creature emerged from the shadows, its scales shimmering like a thousand tiny mirrors. It regarded them with eyes that glowed with an otherworldly light, a mix of wisdom and challenge.
+
+“What do you seek, young ones?” its voice echoed through the water, a melody of power and grace.
+
+Jacob felt the familiar echo in his head intensify, urging him to respond. "We seek to understand the bond between your civilization and the ocean," he called out, the words flowing from him as if guided by the echoes themselves. "We wish to learn from the past, to protect our home."
+
+The guardian creature tilted its head, its gaze piercing yet understanding. “To hear the echoes is to accept the weight of history. Are you prepared to carry it?”
+
+Luis stepped forward, emboldened by Jacob’s words. "We are ready. We must learn. The ocean deserves our respect."
+
+And thus, the stage was set for an exploration that would transcend time itself. With the guardian as their guide, Jacob and Luis stood at the crossroads of history and future, ready to delve into the depths of knowledge and mystery that awaited them.
+
+What secrets will the echoes reveal? What lessons will they uncover? The journey has only just begun.
+''',
+'''
+In Aquapolis, the shimmering waves danced with bioluminescent light as Arial and Paul marveled at the Lumenflora, the magical plant they had discovered. Its radiant glow illuminated the submerged caves, casting ethereal shadows that flickered like memories of an ancient past. They began to carefully extract samples, envisioning a future where this plant could revolutionize underwater agriculture, providing not just light, but nourishment for the community.
+
+Meanwhile, deep within the ancient ruins, Jacob and Luis stood before the guardian creature—a majestic, ethereal being woven from the very essence of the ocean. Its eyes glowed with a wisdom that transcended time, and it spoke in a voice that echoed through the water like a gentle current.
+
+"You seek to heal the wounds of your world," the guardian intoned, its form shifting in the currents. "But to do so, you must first understand the lessons of those who came before you."
+
+As Jacob and Luis exchanged glances, a sense of urgency filled the water around them. They had witnessed the deterioration of their environment, and now, faced with this guardian, they felt the weight of their mission. They needed to create something that could bridge the gap between the past and the present—a means to heal not just the environment, but the guardian itself, which bore the scars of neglect.
+
+Inspired, Luis proposed an idea—a medical device that could harness the bioluminescent properties of Lumenflora to heal the guardian. "If we can channel its energy, we might restore balance not only to this creature but also to the ocean itself," he said, his eyes sparkling with determination.
+
+"Together, we can craft something extraordinary," Jacob replied, envisioning the fusion of ancient wisdom with their cutting-edge technology. They gathered materials from the ruins, remnants of a civilization that once thrived, and began to design the device. Each piece they collected told a story, whispering secrets of sustainable practices and harmony with nature.
+
+Back at the community center, Arial and Paul prepared their presentation, excited to share their findings about Lumenflora. They were unaware of the deeper journey unfolding in the ruins, where Jacob and Luis were forging a path toward healing.
+
+As the days passed, the two groups remained connected, sharing their progress. Arial and Paul worked tirelessly to cultivate the bioluminescent plant, while Jacob and Luis engineered a prototype for their healing device, each discovery intertwined with the other.
+
+The underwater city thrummed with anticipation as the explorers prepared for their next community event, where they would unveil not just their findings, but the very essence of their intertwined destinies. They understood that the ocean held the keys to their future, and with each new revelation, they drew closer to unlocking the mysteries that lay beneath the waves.
+
+In the depths of Aquapolis, the echoes of history continued to guide them, weaving a tale of resilience and hope as they ventured further into a world where the past and present converged.
+'''
+]
 # character_allocation, initize the character allocation, include all the characeter you want.
 ca = {"group1":['Arial', 'Paul', 'Luis', 'Jacob']}
 # summary, optional, input []
 su = ['''Summary: The Divide of the Deep
 In Aquapolis, Arial and Paul explore bioluminescent plants to enhance sustainable agriculture, while Jacob and Luis investigate artifacts from an ancient civilization. As both groups make discoveries, they realize their pursuits are interconnected, revealing lessons about environmental neglect.
 
-They unite to share their findings at a community event, presenting innovative ideas for sustainability and Jacob’s mural depicting the ancient civilization’s rise and fall. Their collaboration inspires the citizens of Aquapolis, reinforcing the importance of living in harmony with the ocean and shaping a brighter future together.''']
+They unite to share their findings at a community event, presenting innovative ideas for sustainability and Jacob’s mural depicting the ancient civilization’s rise and fall. Their collaboration inspires the citizens of Aquapolis, reinforcing the importance of living in harmony with the ocean and shaping a brighter future together.''',
+
+'''
+In Aquapolis, Arial and Paul explore bioluminescent plants to enhance sustainable agriculture, while Jacob and Luis investigate artifacts from an ancient civilization. As both groups make discoveries, they realize their pursuits are interconnected, revealing lessons about environmental neglect.
+
+They unite to share their findings at a community event, presenting innovative ideas for sustainability and Jacob’s mural depicting the ancient civilization’s rise and fall. Their collaboration inspires the citizens of Aquapolis, reinforcing the importance of living in harmony with the ocean and shaping a brighter future together.
+'''
+,
+'''
+In Aquapolis, two groups of explorers—one led by Arial and Paul studying bioluminescent plants for sustainable agriculture, and the other by Jacob and Luis investigating ancient artifacts—discover interconnected lessons about environmental neglect. They unite for a community event, sharing their findings and Jacob's mural that reflects the ancient civilization's history.
+
+As their journey continues, Jacob and Luis venture into the ruins of an ancient undersea city. There, they encounter a mysterious guardian creature, which challenges them to understand the bond between the past and their current efforts towards sustainability. This pivotal moment deepens their exploration, intertwining their fates as they seek to learn from history and protect their oceanic home.
+''',
+'''
+In the underwater city of Aquapolis, explorers Jacob and Luis delve into ancient ruins, haunted by the echo of a mysterious guardian creature they encountered. As they navigate the remnants of a lost civilization, they seek to understand the connection between the past and their current sustainability efforts. The echo intensifies, urging them to uncover forgotten wisdom. With determination, they decide to explore deeper, hoping to learn from the ancient echoes and protect their oceanic home. Their journey intertwines with the lessons of history, setting the stage for profound discoveries.
+''',
+'''
+In Aquapolis, explorers Arial and Paul discover the bioluminescent plant Lumenflora, envisioning its potential for sustainable agriculture. Meanwhile, Jacob and Luis delve into ancient ruins, encountering a guardian creature that urges them to learn from the past. Inspired, Luis proposes creating a medical device that harnesses Lumenflora's energy to heal the guardian and restore balance to the ocean. As both groups collaborate, they share their findings at a community event, intertwining their destinies in a quest for environmental healing and sustainability. Their journey reflects a deep connection between history and the future of their underwater home.
+''']
 nar_output = call_nar_graph(ws, ui, sg , ca , su)
 # %%
 pprint(nar_output)
 # %%
+print(nar_output['output'])
+# %%
+import json
+with open('experiment1_sg_su.json', 'w') as f:
+    json.dump({'sg': sg, 'su': su}, f, indent=2)

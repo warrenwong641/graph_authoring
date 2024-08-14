@@ -1,0 +1,12 @@
+generation
+ 1: https://poe.com/s/vuSpeIoNKyuQlcnkTupa
+ 2: https://poe.com/s/d1JfxQgFNmUarLnQMGlY
+ 3: https://poe.com/s/Zx1R0gED2K9IuOcOznql
+ 4: https://poe.com/s/lkS1J9dRXKWNlorlLBL3
+
+naive genreation
+https://poe.com/s/zGdUY72xRGWROyZIgMic
+
+evaluation
+our method: https://poe.com/s/NvEHAV7GzGY68HQ4PyyN
+naive generation: https://poe.com/s/0HXQ7CI1aXe0MM8vwOJM
